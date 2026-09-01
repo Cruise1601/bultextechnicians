@@ -119,19 +119,11 @@
       </section>
 
       <section class="card">
-        <h2>1. Daily Work Record</h2>
-        <form id="dailyForm" class="form-grid">
+        <h2>📋 Job Record & Payment</h2>
+        <form id="combinedForm" class="form-grid">
           <label>
             <span>Date</span>
-            <input type="date" id="dailyDate" required />
-          </label>
-          <label>
-            <span>Technician Name</span>
-            <input type="text" id="technicianName" placeholder="e.g. John Kamau" required />
-          </label>
-          <label>
-            <span>Department</span>
-            <input type="text" id="department" value="Technical Department" required />
+            <input type="date" id="recordDate" required />
           </label>
           <label>
             <span>Client / Equipment</span>
@@ -139,7 +131,7 @@
           </label>
           <label class="full-width">
             <span>Activity / Work Done</span>
-            <textarea id="dailyActivity" rows="3" placeholder="Describe the technical work performed today" required></textarea>
+            <textarea id="activity" rows="2" placeholder="Describe the technical work performed" required></textarea>
           </label>
           <label>
             <span>Status</span>
@@ -149,118 +141,50 @@
               <option value="In Progress">In Progress</option>
             </select>
           </label>
-          <div class="form-actions full-width">
-            <button type="submit">Save Daily Record</button>
-          </div>
-        </form>
 
-        <div class="filter-bar">
-          <input type="text" id="dailyFilter" placeholder="🔍 Search by technician or client..." class="filter-input" />
-          <button type="button" id="exportDailyBtn" class="export-btn-small">📥 Export</button>
-        </div>
+          <hr class="form-divider" />
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Technician</th>
-                <th>Client / Item</th>
-                <th>Activity</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="dailyRecordsBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>2. Spare Parts and Repairs Record</h2>
-        <form id="spareForm" class="form-grid">
-          <label>
-            <span>Date</span>
-            <input type="date" id="spareDate" required />
-          </label>
+          <h3 style="grid-column: 1 / -1; margin-top: 10px;">Spare Parts Used (Optional)</h3>
           <label>
             <span>Issue Fixed</span>
-            <input type="text" id="issueFixed" placeholder="e.g. TV power fault" required />
+            <input type="text" id="issueFixed" placeholder="e.g. TV power fault" />
           </label>
           <label>
             <span>Spare Part Name</span>
-            <input type="text" id="spareName" placeholder="e.g. Mainboard" required />
+            <input type="text" id="spareName" placeholder="e.g. Mainboard" />
           </label>
           <label>
             <span>Supplier Phone</span>
-            <input type="tel" id="supplierPhone" placeholder="e.g. 0712345678" required />
+            <input type="tel" id="supplierPhone" placeholder="e.g. 0712345678" />
           </label>
           <label class="full-width">
             <span>Where Spare Was Gotten</span>
-            <input type="text" id="spareSource" placeholder="e.g. Nairobi electronics market" required />
+            <input type="text" id="spareSource" placeholder="e.g. Nairobi electronics market" />
           </label>
           <label>
             <span>Cost (KES)</span>
-            <input type="number" id="spareCost" min="0" step="0.01" placeholder="0.00" required />
+            <input type="number" id="spareCost" min="0" step="0.01" placeholder="0.00" />
           </label>
-          <label>
-            <span>Technician Name</span>
-            <input type="text" id="spareTechnician" placeholder="Technician in charge" required />
-          </label>
-          <div class="form-actions full-width">
-            <button type="submit">Save Spare Record</button>
-          </div>
-        </form>
 
-        <div class="filter-bar">
-          <input type="text" id="spareFilter" placeholder="🔍 Search by part name or issue..." class="filter-input" />
-          <button type="button" id="exportSpareBtn" class="export-btn-small">📥 Export</button>
-        </div>
+          <hr class="form-divider" />
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Issue Fixed</th>
-                <th>Spare Name</th>
-                <th>Phone</th>
-                <th>Source</th>
-                <th>Cost</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="spareRecordsBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>3. Client Payment and E-Receipt</h2>
-        <form id="paymentForm" class="form-grid">
-          <label>
-            <span>Date</span>
-            <input type="date" id="paymentDate" required />
-          </label>
-          <label>
-            <span>Client Name</span>
-            <input type="text" id="clientName" placeholder="Client full name" required />
-          </label>
+          <h3 style="grid-column: 1 / -1; margin-top: 10px;">Client Payment (Optional)</h3>
           <label>
             <span>Receipt Number</span>
-            <input type="text" id="receiptNumber" placeholder="e.g. BTE-1001" required />
+            <input type="text" id="receiptNumber" placeholder="e.g. BTE-1001" />
           </label>
           <label>
             <span>Service / Item</span>
-            <input type="text" id="serviceItem" placeholder="Repair / product / service" required />
+            <input type="text" id="serviceItem" placeholder="Repair / product / service" />
           </label>
           <label>
             <span>Amount Paid (KES)</span>
-            <input type="number" id="amountPaid" min="0" step="0.01" placeholder="0.00" required />
+            <input type="number" id="amountPaid" min="0" step="0.01" placeholder="0.00" />
           </label>
           <label>
             <span>Payment Method</span>
-            <select id="paymentMethod" required>
+            <select id="paymentMethod">
+              <option value="">-- Select (if applicable) --</option>
               <option value="Cash">Cash</option>
               <option value="Mpesa">Mpesa</option>
               <option value="Bank Transfer">Bank Transfer</option>
@@ -271,15 +195,16 @@
             <span>Payment Notes</span>
             <textarea id="paymentNotes" rows="2" placeholder="Optional notes"></textarea>
           </label>
+
           <div class="form-actions full-width">
-            <button type="submit">Save Payment & Generate Receipt</button>
+            <button type="submit">Save Record</button>
             <button type="button" class="secondary" id="printReceiptBtn">Print Receipt</button>
           </div>
         </form>
 
         <div class="filter-bar">
-          <input type="text" id="paymentFilter" placeholder="🔍 Search by client or receipt..." class="filter-input" />
-          <button type="button" id="exportPaymentBtn" class="export-btn-small">📥 Export</button>
+          <input type="text" id="recordFilter" placeholder="🔍 Search by client or date..." class="filter-input" />
+          <button type="button" id="exportRecordsBtn" class="export-btn-small">📥 Export</button>
         </div>
 
         <div class="table-wrap">
@@ -288,14 +213,14 @@
               <tr>
                 <th>Date</th>
                 <th>Client</th>
-                <th>Receipt</th>
-                <th>Service</th>
-                <th>Amount</th>
-                <th>Method</th>
+                <th>Work Done</th>
+                <th>Status</th>
+                <th>Spare Part / Cost</th>
+                <th>Payment / Method</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody id="paymentRecordsBody"></tbody>
+            <tbody id="recordsBody"></tbody>
           </table>
         </div>
 

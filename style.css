@@ -695,6 +695,23 @@ th {
   color: white;
 }
 
+/* Combined Form Styles */
+.form-grid h3 {
+  color: var(--primary-dark);
+  font-size: 1rem;
+  margin: 16px 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.form-divider {
+  grid-column: 1 / -1;
+  border: none;
+  border-top: 2px dashed var(--line);
+  margin: 16px 0;
+  height: 0;
+}
+
 @media print {
   body {
     background: #fff;
