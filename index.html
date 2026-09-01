@@ -150,12 +150,19 @@
             <input type="text" id="issueFixed" placeholder="e.g. TV power fault" />
           </label>
           <label>
-            <span>Spare Part Name</span>
-            <input type="text" id="spareName" placeholder="e.g. Mainboard" />
-          </label>
-          <label>
-            <span>Supplier Phone</span>
-            <input type="tel" id="supplierPhone" placeholder="e.g. 0712345678" />
+            <span>Device Type</span>
+            <select id="spareName">
+              <option value="">-- Select Device --</option>
+              <option value="iPhone">iPhone</option>
+              <option value="Android Phone">Android Phone</option>
+              <option value="PlayStation 4">PlayStation 4</option>
+              <option value="PlayStation 5">PlayStation 5</option>
+              <option value="PS4 Controller">PS4 Controller</option>
+              <option value="PS5 Controller">PS5 Controller</option>
+              <option value="Laptop">Laptop</option>
+              <option value="Desktop PC">Desktop PC</option>
+              <option value="Other">Other</option>
+            </select>
           </label>
           <label class="full-width">
             <span>Where Spare Was Gotten</span>
@@ -171,7 +178,8 @@
           <h3 style="grid-column: 1 / -1; margin-top: 10px;">Client Payment (Optional)</h3>
           <label>
             <span>Receipt Number</span>
-            <input type="text" id="receiptNumber" placeholder="e.g. BTE-1001" />
+            <input type="text" id="receiptNumber" placeholder="Auto-generated" readonly />
+            <small style="color: #666; font-size: 0.85em; margin-top: 2px;">Auto-generated on payment entry</small>
           </label>
           <label>
             <span>Service / Item</span>
@@ -226,6 +234,10 @@
 
         <div class="receipt-box">
           <h3>Generated E-Receipt Preview</h3>
+          <div class="receipt-actions">
+            <button type="button" id="copyReceiptBtn" class="copy-btn">📋 Copy Receipt</button>
+            <button type="button" id="printReceiptBtn" class="copy-btn">🖨️ Print</button>
+          </div>
           <div id="receiptPreview" class="receipt-preview">
             <p>No receipt generated yet.</p>
           </div>

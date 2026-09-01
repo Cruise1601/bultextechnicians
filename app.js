@@ -225,6 +225,13 @@ function formatCurrency(value) {
   }).format(Number(value || 0));
 }
 
+function generateReceiptNumber() {
+  const date = new Date();
+  const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+  const random = Math.floor(Math.random() * 10000);
+  return `RCP-${dateStr}-${String(random).padStart(4, '0')}`;
+}
+
 // Get DOM elements with safe defaults
 const getElement = (id) => document.getElementById(id);
 let combinedForm, recordsBody, receiptPreview, printReceiptBtn, editModal, modalBody, closeModalBtn, cancelEditBtn, saveEditBtn;
@@ -357,8 +364,27 @@ function openEditModal(recordId) {
     <hr class="form-divider" />
     <h3>Spare Parts (Optional)</h3>
     <label>
-      <span>Spare Part Name</span>
-      <input type="text" id="editSpareName" value="${record.spareName || ''}" />
+      <span>Issue Fixed</span>
+      <input type="text" id="editIssueFixed" value="${record.issueFixed || ''}" />
+    </label>
+    <label>
+      <span>Device Type</span>
+      <select id="editSpareName">
+        <option value="">-- Select Device --</option>
+        <option value="iPhone" ${record.spareName === 'iPhone' ? 'selected' : ''}>iPhone</option>
+        <option value="Android Phone" ${record.spareName === 'Android Phone' ? 'selected' : ''}>Android Phone</option>
+        <option value="PlayStation 4" ${record.spareName === 'PlayStation 4' ? 'selected' : ''}>PlayStation 4</option>
+        <option value="PlayStation 5" ${record.spareName === 'PlayStation 5' ? 'selected' : ''}>PlayStation 5</option>
+        <option value="PS4 Controller" ${record.spareName === 'PS4 Controller' ? 'selected' : ''}>PS4 Controller</option>
+        <option value="PS5 Controller" ${record.spareName === 'PS5 Controller' ? 'selected' : ''}>PS5 Controller</option>
+        <option value="Laptop" ${record.spareName === 'Laptop' ? 'selected' : ''}>Laptop</option>
+        <option value="Desktop PC" ${record.spareName === 'Desktop PC' ? 'selected' : ''}>Desktop PC</option>
+        <option value="Other" ${record.spareName === 'Other' ? 'selected' : ''}>Other</option>
+      </select>
+    </label>
+    <label class="full-width">
+      <span>Where Spare Was Gotten</span>
+      <input type="text" id="editSpareSource" value="${record.spareSource || ''}" />
     </label>
     <label>
       <span>Cost (KES)</span>
@@ -369,6 +395,10 @@ function openEditModal(recordId) {
     <label>
       <span>Receipt Number</span>
       <input type="text" id="editReceiptNumber" value="${record.receiptNumber || ''}" />
+    </label>
+    <label>
+      <span>Service / Item</span>
+      <input type="text" id="editServiceItem" value="${record.serviceItem || ''}" />
     </label>
     <label>
       <span>Amount Paid (KES)</span>
@@ -383,6 +413,10 @@ function openEditModal(recordId) {
         <option value="Bank Transfer" ${record.paymentMethod === 'Bank Transfer' ? 'selected' : ''}>Bank Transfer</option>
         <option value="Card" ${record.paymentMethod === 'Card' ? 'selected' : ''}>Card</option>
       </select>
+    </label>
+    <label class="full-width">
+      <span>Payment Notes</span>
+      <textarea id="editPaymentNotes" rows="2">${record.paymentNotes || ''}</textarea>
     </label>
   `;
 
@@ -412,17 +446,15 @@ function saveEditedRecord() {
     clientEquipment: document.getElementById('editClientEquipment').value.trim(),
     activity: document.getElementById('editActivity').value.trim(),
     workStatus: document.getElementById('editWorkStatus').value,
-    issueFixed: records[index].issueFixed,
+    issueFixed: document.getElementById('editIssueFixed').value.trim(),
     spareName: document.getElementById('editSpareName').value.trim() || '',
-    supplierPhone: records[index].supplierPhone,
-    spareSource: records[index].spareSource,
+    spareSource: document.getElementById('editSpareSource').value.trim(),
     spareCost: Number(document.getElementById('editSpareCost').value || 0),
-    spareTechnician: records[index].spareTechnician,
     receiptNumber: document.getElementById('editReceiptNumber').value.trim() || '',
-    serviceItem: records[index].serviceItem,
+    serviceItem: document.getElementById('editServiceItem').value.trim(),
     amountPaid: Number(document.getElementById('editAmountPaid').value || 0),
     paymentMethod: document.getElementById('editPaymentMethod').value || '',
-    paymentNotes: records[index].paymentNotes,
+    paymentNotes: document.getElementById('editPaymentNotes').value.trim(),
   };
 
   records[index] = updatedRecord;
@@ -476,6 +508,16 @@ function exportToCSV() {
 
 function handleCombinedSubmit(event) {
   event.preventDefault();
+  const amountPaid = Number(document.getElementById('amountPaid').value || 0);
+  const receiptNumberField = document.getElementById('receiptNumber');
+  
+  // Auto-generate receipt number if payment is being recorded
+  let receiptNumber = receiptNumberField.value.trim();
+  if (amountPaid > 0 && !receiptNumber) {
+    receiptNumber = generateReceiptNumber();
+    receiptNumberField.value = receiptNumber;
+  }
+  
   const record = {
     id: generateId(),
     date: document.getElementById('recordDate').value,
@@ -484,13 +526,11 @@ function handleCombinedSubmit(event) {
     workStatus: document.getElementById('workStatus').value,
     issueFixed: document.getElementById('issueFixed').value.trim(),
     spareName: document.getElementById('spareName').value.trim() || '',
-    supplierPhone: document.getElementById('supplierPhone').value.trim(),
     spareSource: document.getElementById('spareSource').value.trim(),
     spareCost: Number(document.getElementById('spareCost').value || 0),
-    spareTechnician: '',
-    receiptNumber: document.getElementById('receiptNumber').value.trim() || '',
+    receiptNumber: receiptNumber,
     serviceItem: document.getElementById('serviceItem').value.trim(),
-    amountPaid: Number(document.getElementById('amountPaid').value || 0),
+    amountPaid: amountPaid,
     paymentMethod: document.getElementById('paymentMethod').value,
     paymentNotes: document.getElementById('paymentNotes').value.trim(),
   };
@@ -519,11 +559,33 @@ function printReceipt() {
   window.print();
 }
 
+function copyReceipt() {
+  const preview = receiptPreview.innerHTML;
+  if (preview.includes('No receipt generated yet')) {
+    alert('Generate a receipt before copying.');
+    return;
+  }
+  
+  const text = receiptPreview.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = getElement('copyReceiptBtn');
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.textContent = originalText;
+    }, 2000);
+  }).catch(err => {
+    alert('Failed to copy receipt');
+  });
+}
+
 // ===== EVENT LISTENERS =====
 
 function setupFormEvents() {
   if (combinedForm) combinedForm.addEventListener('submit', handleCombinedSubmit);
   if (printReceiptBtn) printReceiptBtn.addEventListener('click', printReceipt);
+  const copyReceiptBtn = getElement('copyReceiptBtn');
+  if (copyReceiptBtn) copyReceiptBtn.addEventListener('click', copyReceipt);
   if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
   if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeModal);
   if (saveEditBtn) saveEditBtn.addEventListener('click', saveEditedRecord);

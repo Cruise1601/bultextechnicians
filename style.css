@@ -404,6 +404,35 @@ th {
   padding-top: 20px;
 }
 
+.receipt-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.copy-btn {
+  padding: 8px 14px;
+  background: #0a4d7d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: #083b60;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(10, 77, 125, 0.2);
+}
+
+.copy-btn:active {
+  transform: translateY(0);
+}
+
 .receipt-preview {
   background: #fbfdff;
   border: 1px solid var(--line);
