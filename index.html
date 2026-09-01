@@ -7,13 +7,112 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main class="container">
-      <header class="page-header">
-        <div>
-          <p class="eyebrow">Technical Department Logbook</p>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container show">
+      <div class="login-box">
+        <div class="login-header">
           <h1>Bultex Electronics Isiolo</h1>
+          <p class="login-subtitle">Technical Department Logbook</p>
+        </div>
+        
+        <div id="loginForm" class="login-form-section">
+          <h2>Login</h2>
+          <form id="loginFormElement">
+            <label>
+              <span>Username</span>
+              <input type="text" id="loginUsername" placeholder="Enter username" required />
+            </label>
+            <label>
+              <span>Password</span>
+              <input type="password" id="loginPassword" placeholder="Enter password" required />
+            </label>
+            <button type="submit" class="login-btn">Sign In</button>
+          </form>
+          <p class="form-toggle">Don't have an account? <a href="#" id="showRegisterBtn">Create one</a></p>
+        </div>
+
+        <div id="registerForm" class="login-form-section hidden">
+          <h2>Create Account</h2>
+          <form id="registerFormElement">
+            <label>
+              <span>Full Name</span>
+              <input type="text" id="registerName" placeholder="Enter your full name" required />
+            </label>
+            <label>
+              <span>Username</span>
+              <input type="text" id="registerUsername" placeholder="Choose a username" required />
+            </label>
+            <label>
+              <span>Password</span>
+              <input type="password" id="registerPassword" placeholder="Create a strong password" required />
+            </label>
+            <label>
+              <span>Confirm Password</span>
+              <input type="password" id="registerConfirm" placeholder="Confirm password" required />
+            </label>
+            <label>
+              <span>Department</span>
+              <select id="registerDept" required>
+                <option value="">Select department</option>
+                <option value="Technical">Technical</option>
+                <option value="Management">Management</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </label>
+            <button type="submit" class="login-btn">Create Account</button>
+          </form>
+          <p class="form-toggle">Already have an account? <a href="#" id="showLoginBtn">Sign in</a></p>
+        </div>
+
+        <div class="login-info">
+          <p><strong>Demo Credentials:</strong></p>
+          <p>Username: <code>admin</code></p>
+          <p>Password: <code>admin123</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Application -->
+    <main class="container hidden" id="appContainer">
+      <header class="page-header">
+        <div class="header-content">
+          <div>
+            <p class="eyebrow">Technical Department Logbook</p>
+            <h1>Bultex Electronics Isiolo</h1>
+          </div>
+          <div class="user-info">
+            <span id="userGreeting">Welcome</span>
+            <button type="button" id="logoutBtn" class="logout-btn">🚪 Logout</button>
+          </div>
         </div>
       </header>
+
+      <!-- Dashboard Summary -->
+      <section class="card dashboard">
+        <h2>📊 Technical Team Summary</h2>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Work Records</div>
+            <div class="stat-value" id="dailyCount">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Spare Parts Used</div>
+            <div class="stat-value" id="spareCount">0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Total Spare Cost</div>
+            <div class="stat-value" id="spareTotalCost">KES 0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Total Payments</div>
+            <div class="stat-value" id="paymentTotal">KES 0</div>
+          </div>
+        </div>
+        <div class="dashboard-actions">
+          <button type="button" id="exportAllBtn" class="export-btn">📥 Export All to CSV</button>
+          <button type="button" id="clearAllBtn" class="danger-btn">🗑️ Clear All Data</button>
+        </div>
+      </section>
 
       <section class="card">
         <h2>1. Daily Work Record</h2>
@@ -51,6 +150,11 @@
           </div>
         </form>
 
+        <div class="filter-bar">
+          <input type="text" id="dailyFilter" placeholder="🔍 Search by technician or client..." class="filter-input" />
+          <button type="button" id="exportDailyBtn" class="export-btn-small">📥 Export</button>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -60,6 +164,7 @@
                 <th>Client / Item</th>
                 <th>Activity</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="dailyRecordsBody"></tbody>
@@ -103,6 +208,11 @@
           </div>
         </form>
 
+        <div class="filter-bar">
+          <input type="text" id="spareFilter" placeholder="🔍 Search by part name or issue..." class="filter-input" />
+          <button type="button" id="exportSpareBtn" class="export-btn-small">📥 Export</button>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -113,6 +223,7 @@
                 <th>Phone</th>
                 <th>Source</th>
                 <th>Cost</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="spareRecordsBody"></tbody>
@@ -162,6 +273,11 @@
           </div>
         </form>
 
+        <div class="filter-bar">
+          <input type="text" id="paymentFilter" placeholder="🔍 Search by client or receipt..." class="filter-input" />
+          <button type="button" id="exportPaymentBtn" class="export-btn-small">📥 Export</button>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -172,6 +288,7 @@
                 <th>Service</th>
                 <th>Amount</th>
                 <th>Method</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="paymentRecordsBody"></tbody>
@@ -186,6 +303,21 @@
         </div>
       </section>
     </main>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Edit Record</h3>
+          <button type="button" class="close-btn" id="closeModalBtn">&times;</button>
+        </div>
+        <div id="modalBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="secondary" id="cancelEditBtn">Cancel</button>
+          <button type="button" id="saveEditBtn">Save Changes</button>
+        </div>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>
