@@ -492,6 +492,24 @@ th {
   color: var(--primary);
 }
 
+.stat-box.stat-negative .stat-value {
+  color: var(--danger);
+}
+
+.stat-box.stat-positive .stat-value {
+  color: var(--success);
+}
+
+.stat-box.stat-profit {
+  border-left: 4px solid var(--success);
+  background: linear-gradient(135deg, rgba(18, 128, 92, 0.05) 0%, transparent 100%);
+}
+
+.stat-box.stat-profit .stat-value {
+  color: var(--success);
+  font-size: 2rem;
+}
+
 .dashboard-actions {
   display: flex;
   gap: 12px;

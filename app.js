@@ -273,6 +273,10 @@ function updateDashboard() {
 
   const paymentTotal = paymentRecords.reduce((sum, r) => sum + (r.amountPaid || 0), 0);
   document.getElementById('paymentTotal').textContent = formatCurrency(paymentTotal);
+
+  // Calculate and display profit
+  const totalProfit = paymentTotal - spareTotalCost;
+  document.getElementById('totalProfit').textContent = formatCurrency(totalProfit);
 }
 
 function renderDailyRecords(filterText = '') {
