@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bultex Electronics Isiolo - Technical Team</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Technical Department Logbook</p>
+          <h1>Bultex Electronics Isiolo</h1>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2>1. Daily Work Record</h2>
+        <form id="dailyForm" class="form-grid">
+          <label>
+            <span>Date</span>
+            <input type="date" id="dailyDate" required />
+          </label>
+          <label>
+            <span>Technician Name</span>
+            <input type="text" id="technicianName" placeholder="e.g. John Kamau" required />
+          </label>
+          <label>
+            <span>Department</span>
+            <input type="text" id="department" value="Technical Department" required />
+          </label>
+          <label>
+            <span>Client / Equipment</span>
+            <input type="text" id="clientEquipment" placeholder="Client or machine name" required />
+          </label>
+          <label class="full-width">
+            <span>Activity / Work Done</span>
+            <textarea id="dailyActivity" rows="3" placeholder="Describe the technical work performed today" required></textarea>
+          </label>
+          <label>
+            <span>Status</span>
+            <select id="workStatus" required>
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+            </select>
+          </label>
+          <div class="form-actions full-width">
+            <button type="submit">Save Daily Record</button>
+          </div>
+        </form>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Technician</th>
+                <th>Client / Item</th>
+                <th>Activity</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dailyRecordsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2. Spare Parts and Repairs Record</h2>
+        <form id="spareForm" class="form-grid">
+          <label>
+            <span>Date</span>
+            <input type="date" id="spareDate" required />
+          </label>
+          <label>
+            <span>Issue Fixed</span>
+            <input type="text" id="issueFixed" placeholder="e.g. TV power fault" required />
+          </label>
+          <label>
+            <span>Spare Part Name</span>
+            <input type="text" id="spareName" placeholder="e.g. Mainboard" required />
+          </label>
+          <label>
+            <span>Supplier Phone</span>
+            <input type="tel" id="supplierPhone" placeholder="e.g. 0712345678" required />
+          </label>
+          <label class="full-width">
+            <span>Where Spare Was Gotten</span>
+            <input type="text" id="spareSource" placeholder="e.g. Nairobi electronics market" required />
+          </label>
+          <label>
+            <span>Cost (KES)</span>
+            <input type="number" id="spareCost" min="0" step="0.01" placeholder="0.00" required />
+          </label>
+          <label>
+            <span>Technician Name</span>
+            <input type="text" id="spareTechnician" placeholder="Technician in charge" required />
+          </label>
+          <div class="form-actions full-width">
+            <button type="submit">Save Spare Record</button>
+          </div>
+        </form>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Issue Fixed</th>
+                <th>Spare Name</th>
+                <th>Phone</th>
+                <th>Source</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody id="spareRecordsBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>3. Client Payment and E-Receipt</h2>
+        <form id="paymentForm" class="form-grid">
+          <label>
+            <span>Date</span>
+            <input type="date" id="paymentDate" required />
+          </label>
+          <label>
+            <span>Client Name</span>
+            <input type="text" id="clientName" placeholder="Client full name" required />
+          </label>
+          <label>
+            <span>Receipt Number</span>
+            <input type="text" id="receiptNumber" placeholder="e.g. BTE-1001" required />
+          </label>
+          <label>
+            <span>Service / Item</span>
+            <input type="text" id="serviceItem" placeholder="Repair / product / service" required />
+          </label>
+          <label>
+            <span>Amount Paid (KES)</span>
+            <input type="number" id="amountPaid" min="0" step="0.01" placeholder="0.00" required />
+          </label>
+          <label>
+            <span>Payment Method</span>
+            <select id="paymentMethod" required>
+              <option value="Cash">Cash</option>
+              <option value="Mpesa">Mpesa</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Card">Card</option>
+            </select>
+          </label>
+          <label class="full-width">
+            <span>Payment Notes</span>
+            <textarea id="paymentNotes" rows="2" placeholder="Optional notes"></textarea>
+          </label>
+          <div class="form-actions full-width">
+            <button type="submit">Save Payment & Generate Receipt</button>
+            <button type="button" class="secondary" id="printReceiptBtn">Print Receipt</button>
+          </div>
+        </form>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Receipt</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Method</th>
+              </tr>
+            </thead>
+            <tbody id="paymentRecordsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="receipt-box">
+          <h3>Generated E-Receipt Preview</h3>
+          <div id="receiptPreview" class="receipt-preview">
+            <p>No receipt generated yet.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
