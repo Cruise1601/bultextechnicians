@@ -225,15 +225,21 @@ function formatCurrency(value) {
   }).format(Number(value || 0));
 }
 
-const combinedForm = document.getElementById('combinedForm');
-const recordsBody = document.getElementById('recordsBody');
-const receiptPreview = document.getElementById('receiptPreview');
-const printReceiptBtn = document.getElementById('printReceiptBtn');
-const editModal = document.getElementById('editModal');
-const modalBody = document.getElementById('modalBody');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const cancelEditBtn = document.getElementById('cancelEditBtn');
-const saveEditBtn = document.getElementById('saveEditBtn');
+// Get DOM elements with safe defaults
+const getElement = (id) => document.getElementById(id);
+let combinedForm, recordsBody, receiptPreview, printReceiptBtn, editModal, modalBody, closeModalBtn, cancelEditBtn, saveEditBtn;
+
+function initializeDOMElements() {
+  combinedForm = getElement('combinedForm');
+  recordsBody = getElement('recordsBody');
+  receiptPreview = getElement('receiptPreview');
+  printReceiptBtn = getElement('printReceiptBtn');
+  editModal = getElement('editModal');
+  modalBody = getElement('modalBody');
+  closeModalBtn = getElement('closeModalBtn');
+  cancelEditBtn = getElement('cancelEditBtn');
+  saveEditBtn = getElement('saveEditBtn');
+}
 
 function updateDashboard() {
   const records = readData(COMBINED_KEY);
@@ -515,42 +521,55 @@ function printReceipt() {
 
 // ===== EVENT LISTENERS =====
 
-combinedForm.addEventListener('submit', handleCombinedSubmit);
-printReceiptBtn.addEventListener('click', printReceipt);
-closeModalBtn.addEventListener('click', closeModal);
-cancelEditBtn.addEventListener('click', closeModal);
-saveEditBtn.addEventListener('click', saveEditedRecord);
+function setupFormEvents() {
+  if (combinedForm) combinedForm.addEventListener('submit', handleCombinedSubmit);
+  if (printReceiptBtn) printReceiptBtn.addEventListener('click', printReceipt);
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeModal);
+  if (saveEditBtn) saveEditBtn.addEventListener('click', saveEditedRecord);
 
-document.getElementById('recordFilter').addEventListener('input', e => renderRecords(e.target.value));
-document.getElementById('exportRecordsBtn').addEventListener('click', exportToCSV);
+  const recordFilter = getElement('recordFilter');
+  const exportRecordsBtn = getElement('exportRecordsBtn');
+  const clearAllBtn = getElement('clearAllBtn');
 
-document.getElementById('clearAllBtn').addEventListener('click', () => {
-  if (confirm('⚠️ This will DELETE ALL DATA! This action cannot be undone. Type "DELETE ALL" to confirm.')) {
-    const userInput = prompt('Type "DELETE ALL" to confirm:');
-    if (userInput === 'DELETE ALL') {
-      localStorage.removeItem(COMBINED_KEY);
-      renderRecords();
-      updateDashboard();
-      alert('All data has been deleted');
-    }
+  if (recordFilter) recordFilter.addEventListener('input', e => renderRecords(e.target.value));
+  if (exportRecordsBtn) exportRecordsBtn.addEventListener('click', exportToCSV);
+
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', () => {
+      if (confirm('⚠️ This will DELETE ALL DATA! This action cannot be undone. Type "DELETE ALL" to confirm.')) {
+        const userInput = prompt('Type "DELETE ALL" to confirm:');
+        if (userInput === 'DELETE ALL') {
+          localStorage.removeItem(COMBINED_KEY);
+          renderRecords();
+          updateDashboard();
+          alert('All data has been deleted');
+        }
+      }
+    });
   }
-});
 
-window.addEventListener('click', event => {
-  if (event.target === editModal) {
-    closeModal();
+  if (editModal) {
+    window.addEventListener('click', event => {
+      if (event.target === editModal) {
+        closeModal();
+      }
+    });
   }
-});
+}
 
 // ===== INITIALIZATION =====
 
+initializeDOMElements();
 initializeDefaultUsers();
 setupAuthEvents();
+setupFormEvents();
 checkAuth();
 
 const currentUser = getCurrentUser();
 if (currentUser) {
   renderRecords();
   updateDashboard();
-  document.getElementById('recordDate').valueAsDate = new Date();
+  const dateInput = getElement('recordDate');
+  if (dateInput) dateInput.valueAsDate = new Date();
 }
