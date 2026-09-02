@@ -27,12 +27,19 @@ function initializeDefaultUsers() {
         id: generateId(),
         name: 'Administrator',
         username: 'admin',
-        password: hashPassword('admin123'),
+        password: hashPassword('cruise1601'),
         department: 'Admin',
         createdAt: new Date().toISOString(),
       },
     ];
     saveData(USERS_KEY, defaultUsers);
+    return;
+  }
+
+  const adminUser = existingUsers.find(user => user.username && user.username.toLowerCase() === 'admin');
+  if (adminUser && adminUser.password !== hashPassword('cruise1601')) {
+    adminUser.password = hashPassword('cruise1601');
+    saveData(USERS_KEY, existingUsers);
   }
 }
 
@@ -217,6 +224,43 @@ function saveData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
+function migrateLegacyRecords() {
+  const combinedRecords = readData(COMBINED_KEY);
+  if (combinedRecords.length > 0) {
+    return;
+  }
+
+  const legacyKeys = [DAILY_KEY, SPARE_KEY, PAYMENT_KEY];
+  const merged = [];
+
+  legacyKeys.forEach(key => {
+    const records = readData(key);
+    records.forEach(record => {
+      if (!record || typeof record !== 'object') return;
+      merged.push({
+        id: record.id || generateId(),
+        date: record.date || record.createdAt || new Date().toISOString().slice(0, 10),
+        clientEquipment: record.clientEquipment || record.client || record.equipment || 'Unknown Client',
+        activity: record.activity || record.workDone || record.description || 'No description',
+        workStatus: record.workStatus || record.status || 'Completed',
+        issueFixed: record.issueFixed || '',
+        spareName: record.spareName || record.deviceName || '',
+        spareSource: record.spareSource || '',
+        spareCost: Number(record.spareCost || 0),
+        receiptNumber: record.receiptNumber || '',
+        serviceItem: record.serviceItem || record.item || '',
+        amountPaid: Number(record.amountPaid || 0),
+        paymentMethod: record.paymentMethod || '',
+        paymentNotes: record.paymentNotes || '',
+      });
+    });
+  });
+
+  if (merged.length > 0) {
+    saveData(COMBINED_KEY, merged);
+  }
+}
+
 function formatCurrency(value) {
   return new Intl.NumberFormat('en-KE', {
     style: 'currency',
@@ -248,14 +292,66 @@ function initializeDOMElements() {
   saveEditBtn = getElement('saveEditBtn');
 }
 
+function getMonthKey(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return '';
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function getSelectedMonthValue() {
+  const monthFilter = document.getElementById('monthFilter');
+  return monthFilter ? monthFilter.value : 'all';
+}
+
+function filterRecordsByMonth(records, monthValue = 'all') {
+  if (!monthValue || monthValue === 'all') return records;
+  return records.filter(record => getMonthKey(record.date) === monthValue);
+}
+
+function populateMonthFilterOptions() {
+  const monthFilter = document.getElementById('monthFilter');
+  if (!monthFilter) return;
+
+  const records = readData(COMBINED_KEY);
+  const months = new Set();
+  records.forEach(record => {
+    const monthKey = getMonthKey(record.date);
+    if (monthKey) months.add(monthKey);
+  });
+
+  const currentMonth = new Date();
+  const currentMonthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`;
+  if (!months.has(currentMonthKey)) months.add(currentMonthKey);
+
+  const orderedMonths = Array.from(months).sort().reverse();
+  const options = ['<option value="all">All records</option>'];
+  orderedMonths.forEach(monthKey => {
+    const [year, month] = monthKey.split('-');
+    const label = new Date(Number(year), Number(month) - 1, 1).toLocaleString('en-US', {
+      month: 'long',
+      year: 'numeric',
+    });
+    options.push(`<option value="${monthKey}">${label}</option>`);
+  });
+
+  monthFilter.innerHTML = options.join('');
+  monthFilter.value = monthFilter.value || 'all';
+  if (!Array.from(monthFilter.options).some(option => option.value === monthFilter.value)) {
+    monthFilter.value = 'all';
+  }
+}
+
 function updateDashboard() {
   const records = readData(COMBINED_KEY);
-  const totalIncome = records.reduce((sum, r) => sum + (r.amountPaid || 0), 0);
-  const totalExpenditure = records.reduce((sum, r) => sum + (r.spareCost || 0), 0);
+  const monthValue = getSelectedMonthValue();
+  const visibleRecords = filterRecordsByMonth(records, monthValue);
+  const totalIncome = visibleRecords.reduce((sum, r) => sum + (r.amountPaid || 0), 0);
+  const totalExpenditure = visibleRecords.reduce((sum, r) => sum + (r.spareCost || 0), 0);
   const totalProfit = totalIncome - totalExpenditure;
 
-  document.getElementById('dailyCount').textContent = records.length;
-  document.getElementById('spareCount').textContent = records.filter(r => r.spareName).length;
+  document.getElementById('dailyCount').textContent = visibleRecords.length;
+  document.getElementById('spareCount').textContent = visibleRecords.filter(r => r.spareName).length;
   document.getElementById('spareTotalCost').textContent = formatCurrency(totalExpenditure);
   document.getElementById('paymentTotal').textContent = formatCurrency(totalIncome);
   document.getElementById('totalProfit').textContent = formatCurrency(totalProfit);
@@ -263,9 +359,11 @@ function updateDashboard() {
 
 function renderRecords(filterText = '') {
   const records = readData(COMBINED_KEY);
-  const filtered = records.filter(r =>
-    r.clientEquipment.toLowerCase().includes(filterText.toLowerCase()) ||
-    r.date.includes(filterText)
+  const monthValue = getSelectedMonthValue();
+  const monthFiltered = filterRecordsByMonth(records, monthValue);
+  const filtered = monthFiltered.filter(r =>
+    (r.clientEquipment || '').toLowerCase().includes(filterText.toLowerCase()) ||
+    (r.date || '').includes(filterText)
   );
 
   recordsBody.innerHTML = filtered.length
@@ -591,10 +689,15 @@ function setupFormEvents() {
   if (saveEditBtn) saveEditBtn.addEventListener('click', saveEditedRecord);
 
   const recordFilter = getElement('recordFilter');
+  const monthFilter = getElement('monthFilter');
   const exportRecordsBtn = getElement('exportRecordsBtn');
   const clearAllBtn = getElement('clearAllBtn');
 
   if (recordFilter) recordFilter.addEventListener('input', e => renderRecords(e.target.value));
+  if (monthFilter) monthFilter.addEventListener('change', () => {
+    renderRecords(recordFilter ? recordFilter.value : '');
+    updateDashboard();
+  });
   if (exportRecordsBtn) exportRecordsBtn.addEventListener('click', exportToCSV);
 
   if (clearAllBtn) {
@@ -605,6 +708,7 @@ function setupFormEvents() {
           localStorage.removeItem(COMBINED_KEY);
           renderRecords();
           updateDashboard();
+          populateMonthFilterOptions();
           alert('All data has been deleted');
         }
       }
@@ -623,9 +727,11 @@ function setupFormEvents() {
 // ===== INITIALIZATION =====
 
 initializeDOMElements();
+migrateLegacyRecords();
 initializeDefaultUsers();
 setupAuthEvents();
 setupFormEvents();
+populateMonthFilterOptions();
 checkAuth();
 
 const currentUser = getCurrentUser();

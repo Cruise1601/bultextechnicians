@@ -165,7 +165,7 @@
             </select>
           </label>
           <label class="full-width">
-            <span>Where Spare Was Gotten</span>
+            <span>Spare Shop</span>
             <input type="text" id="spareSource" placeholder="e.g. Nairobi electronics market" />
           </label>
           <label>
@@ -206,11 +206,13 @@
 
           <div class="form-actions full-width">
             <button type="submit">Save Record</button>
-            <button type="button" class="secondary" id="printReceiptBtn">Print Receipt</button>
           </div>
         </form>
 
         <div class="filter-bar">
+          <select id="monthFilter" class="filter-input" aria-label="Select month">
+            <option value="all">All records</option>
+          </select>
           <input type="text" id="recordFilter" placeholder="🔍 Search by client or date..." class="filter-input" />
           <button type="button" id="exportRecordsBtn" class="export-btn-small">📥 Export</button>
         </div>
