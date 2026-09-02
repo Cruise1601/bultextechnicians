@@ -243,6 +243,55 @@
           <button type="button" id="exportRecordsBtn" class="export-btn-small">📥 Export</button>
         </div>
 
+        <section class="card summary-card">
+          <h2>📘 Summary Review</h2>
+          <div class="summary-controls">
+            <label>
+              <span>Review Type</span>
+              <select id="summaryType">
+                <option value="daily">Daily Summary</option>
+                <option value="monthly">Monthly Summary</option>
+              </select>
+            </label>
+            <label id="dailySummaryField">
+              <span>Choose Date</span>
+              <input type="date" id="dailySummaryDate" />
+            </label>
+            <label id="monthlySummaryField" class="hidden">
+              <span>Choose Month</span>
+              <select id="summaryMonthFilter">
+                <option value="all">All months</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-box">
+              <span>Records</span>
+              <strong id="summaryRecordCount">0</strong>
+            </div>
+            <div class="summary-box">
+              <span>Income</span>
+              <strong id="summaryIncome">KES 0</strong>
+            </div>
+            <div class="summary-box">
+              <span>Expenditure</span>
+              <strong id="summaryExpenditure">KES 0</strong>
+            </div>
+            <div class="summary-box">
+              <span>Profit</span>
+              <strong id="summaryProfit">KES 0</strong>
+            </div>
+          </div>
+
+          <div class="summary-list-box">
+            <h3 id="summaryListTitle">Daily Record Review</h3>
+            <ul id="summaryList">
+              <li>No records selected.</li>
+            </ul>
+          </div>
+        </section>
+
         <div class="table-wrap">
           <table>
             <thead>

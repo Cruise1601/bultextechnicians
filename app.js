@@ -379,9 +379,6 @@ function filterRecordsByMonth(records, monthValue = 'all') {
 }
 
 function populateMonthFilterOptions() {
-  const monthFilter = document.getElementById('monthFilter');
-  if (!monthFilter) return;
-
   const records = readData(COMBINED_KEY);
   const months = new Set();
   records.forEach(record => {
@@ -394,20 +391,99 @@ function populateMonthFilterOptions() {
   if (!months.has(currentMonthKey)) months.add(currentMonthKey);
 
   const orderedMonths = Array.from(months).sort().reverse();
-  const options = ['<option value="all">All records</option>'];
+  const monthOptions = ['<option value="all">All records</option>'];
   orderedMonths.forEach(monthKey => {
     const [year, month] = monthKey.split('-');
     const label = new Date(Number(year), Number(month) - 1, 1).toLocaleString('en-US', {
       month: 'long',
       year: 'numeric',
     });
-    options.push(`<option value="${monthKey}">${label}</option>`);
+    monthOptions.push(`<option value="${monthKey}">${label}</option>`);
   });
 
-  monthFilter.innerHTML = options.join('');
-  monthFilter.value = monthFilter.value || 'all';
-  if (!Array.from(monthFilter.options).some(option => option.value === monthFilter.value)) {
-    monthFilter.value = 'all';
+  const allFilters = [document.getElementById('monthFilter'), document.getElementById('summaryMonthFilter')];
+  allFilters.forEach(filter => {
+    if (!filter) return;
+    filter.innerHTML = monthOptions.join('');
+    if (!Array.from(filter.options).some(option => option.value === filter.value)) {
+      filter.value = 'all';
+    }
+  });
+}
+
+function getSummaryRecords() {
+  const records = readData(COMBINED_KEY);
+  const summaryType = document.getElementById('summaryType')?.value || 'daily';
+  const dailySummaryDate = document.getElementById('dailySummaryDate')?.value;
+  const monthValue = document.getElementById('summaryMonthFilter')?.value || 'all';
+
+  if (summaryType === 'daily' && dailySummaryDate) {
+    return {
+      title: `Daily Review - ${dailySummaryDate}`,
+      records: records.filter(record => (record.date || '') === dailySummaryDate),
+      mode: 'daily',
+    };
+  }
+
+  const monthlyRecords = filterRecordsByMonth(records, monthValue);
+  const chosenMonth = monthValue === 'all' ? 'All months' : monthValue;
+  return {
+    title: `Monthly Review - ${chosenMonth}`,
+    records: monthlyRecords,
+    mode: 'monthly',
+  };
+}
+
+function renderSummaryReview() {
+  const summaryType = document.getElementById('summaryType')?.value || 'daily';
+  const { title, records, mode } = getSummaryRecords();
+  const summaryRecordCount = document.getElementById('summaryRecordCount');
+  const summaryIncome = document.getElementById('summaryIncome');
+  const summaryExpenditure = document.getElementById('summaryExpenditure');
+  const summaryProfit = document.getElementById('summaryProfit');
+  const summaryList = document.getElementById('summaryList');
+  const summaryListTitle = document.getElementById('summaryListTitle');
+  const dailySummaryField = document.getElementById('dailySummaryField');
+  const monthlySummaryField = document.getElementById('monthlySummaryField');
+
+  if (dailySummaryField && monthlySummaryField) {
+    if (summaryType === 'daily') {
+      dailySummaryField.classList.remove('hidden');
+      monthlySummaryField.classList.add('hidden');
+    } else {
+      dailySummaryField.classList.add('hidden');
+      monthlySummaryField.classList.remove('hidden');
+    }
+  }
+
+  const totalIncome = records.reduce((sum, r) => sum + (r.amountPaid || 0), 0);
+  const totalExpenditure = records.reduce((sum, r) => sum + (r.spareCost || 0), 0);
+  const totalProfit = totalIncome - totalExpenditure;
+
+  if (summaryRecordCount) summaryRecordCount.textContent = records.length;
+  if (summaryIncome) summaryIncome.textContent = formatCurrency(totalIncome);
+  if (summaryExpenditure) summaryExpenditure.textContent = formatCurrency(totalExpenditure);
+  if (summaryProfit) summaryProfit.textContent = formatCurrency(totalProfit);
+  if (summaryListTitle) summaryListTitle.textContent = title;
+
+  if (!summaryList) return;
+
+  if (!records.length) {
+    summaryList.innerHTML = '<li>No records found for this view.</li>';
+    return;
+  }
+
+  summaryList.innerHTML = records
+    .slice(0, 12)
+    .map(record => {
+      const amount = record.amountPaid ? formatCurrency(record.amountPaid) : 'No payment';
+      const spare = record.spareName ? `${record.spareName} / ${formatCurrency(record.spareCost || 0)}` : 'No spare';
+      return `<li><span>${record.date} • ${record.clientEquipment}</span><span>${amount} • ${spare}</span></li>`;
+    })
+    .join('');
+
+  if (records.length > 12) {
+    summaryList.innerHTML += '<li>Showing the latest 12 records.</li>';
   }
 }
 
@@ -759,6 +835,9 @@ function setupFormEvents() {
 
   const recordFilter = getElement('recordFilter');
   const monthFilter = getElement('monthFilter');
+  const summaryType = getElement('summaryType');
+  const dailySummaryDate = getElement('dailySummaryDate');
+  const summaryMonthFilter = getElement('summaryMonthFilter');
   const exportRecordsBtn = getElement('exportRecordsBtn');
   const clearAllBtn = getElement('clearAllBtn');
 
@@ -766,7 +845,11 @@ function setupFormEvents() {
   if (monthFilter) monthFilter.addEventListener('change', () => {
     renderRecords(recordFilter ? recordFilter.value : '');
     updateDashboard();
+    renderSummaryReview();
   });
+  if (summaryType) summaryType.addEventListener('change', renderSummaryReview);
+  if (dailySummaryDate) dailySummaryDate.addEventListener('change', renderSummaryReview);
+  if (summaryMonthFilter) summaryMonthFilter.addEventListener('change', renderSummaryReview);
   if (exportRecordsBtn) exportRecordsBtn.addEventListener('click', exportToCSV);
 
   if (clearAllBtn) {
@@ -801,12 +884,21 @@ initializeDefaultUsers();
 setupAuthEvents();
 setupFormEvents();
 populateMonthFilterOptions();
+
+const today = new Date().toISOString().slice(0, 10);
+const dailySummaryDate = getElement('dailySummaryDate');
+if (dailySummaryDate) dailySummaryDate.value = today;
+
+const summaryType = getElement('summaryType');
+if (summaryType) summaryType.value = 'daily';
+
 checkAuth();
 
 const currentUser = getCurrentUser();
 if (currentUser) {
   renderRecords();
   updateDashboard();
+  renderSummaryReview();
   const dateInput = getElement('recordDate');
   if (dateInput) dateInput.valueAsDate = new Date();
 }
