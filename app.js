@@ -88,6 +88,33 @@ function loginUser(username, password) {
   return { success: true, message: 'Login successful', user };
 }
 
+function resetPassword(username, oldPassword, newPassword, confirmPassword) {
+  if (!username || !oldPassword || !newPassword || !confirmPassword) {
+    return { success: false, message: 'All fields are required' };
+  }
+  if (newPassword.length < 6) {
+    return { success: false, message: 'New password must be at least 6 characters' };
+  }
+  if (newPassword !== confirmPassword) {
+    return { success: false, message: 'New passwords do not match' };
+  }
+
+  const users = readData(USERS_KEY);
+  const userIndex = users.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
+  if (userIndex === -1) {
+    return { success: false, message: 'Username not found' };
+  }
+
+  const user = users[userIndex];
+  if (user.password !== hashPassword(oldPassword)) {
+    return { success: false, message: 'Current password is incorrect' };
+  }
+
+  user.password = hashPassword(newPassword);
+  saveData(USERS_KEY, users);
+  return { success: true, message: 'Password updated successfully' };
+}
+
 function getCurrentUser() {
   const session = sessionStorage.getItem(SESSION_KEY);
   return session ? JSON.parse(session) : null;
@@ -131,8 +158,11 @@ function checkAuth() {
 function setupAuthEvents() {
   const loginFormElement = document.getElementById('loginFormElement');
   const registerFormElement = document.getElementById('registerFormElement');
+  const resetFormElement = document.getElementById('resetFormElement');
   const showRegisterBtn = document.getElementById('showRegisterBtn');
   const showLoginBtn = document.getElementById('showLoginBtn');
+  const showResetBtn = document.getElementById('showResetBtn');
+  const showLoginFromResetBtn = document.getElementById('showLoginFromResetBtn');
   const logoutBtn = document.getElementById('logoutBtn');
 
   if (loginFormElement) {
@@ -146,6 +176,25 @@ function setupAuthEvents() {
         renderRecords();
         updateDashboard();
         loginFormElement.reset();
+      } else {
+        alert(result.message);
+      }
+    });
+  }
+
+  if (resetFormElement) {
+    resetFormElement.addEventListener('submit', e => {
+      e.preventDefault();
+      const username = document.getElementById('resetUsername').value.trim();
+      const oldPassword = document.getElementById('resetOldPassword').value;
+      const newPassword = document.getElementById('resetNewPassword').value;
+      const confirmPassword = document.getElementById('resetConfirmPassword').value;
+      const result = resetPassword(username, oldPassword, newPassword, confirmPassword);
+      if (result.success) {
+        alert(result.message + '\nPlease log in again with your new password.');
+        resetFormElement.reset();
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('resetPasswordForm').classList.add('hidden');
       } else {
         alert(result.message);
       }
@@ -181,6 +230,16 @@ function setupAuthEvents() {
       e.preventDefault();
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.remove('hidden');
+      document.getElementById('resetPasswordForm').classList.add('hidden');
+    });
+  }
+
+  if (showResetBtn) {
+    showResetBtn.addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('resetPasswordForm').classList.remove('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
     });
   }
 
@@ -188,6 +247,16 @@ function setupAuthEvents() {
     showLoginBtn.addEventListener('click', e => {
       e.preventDefault();
       document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('resetPasswordForm').classList.add('hidden');
+    });
+  }
+
+  if (showLoginFromResetBtn) {
+    showLoginFromResetBtn.addEventListener('click', e => {
+      e.preventDefault();
+      document.getElementById('loginForm').classList.remove('hidden');
+      document.getElementById('resetPasswordForm').classList.add('hidden');
       document.getElementById('registerForm').classList.add('hidden');
     });
   }

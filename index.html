@@ -29,6 +29,31 @@
             <button type="submit" class="login-btn">Sign In</button>
           </form>
           <p class="form-toggle">Don't have an account? <a href="#" id="showRegisterBtn">Create one</a></p>
+          <p class="form-toggle"><a href="#" id="showResetBtn">Reset password</a></p>
+        </div>
+
+        <div id="resetPasswordForm" class="login-form-section hidden">
+          <h2>Reset Password</h2>
+          <form id="resetFormElement">
+            <label>
+              <span>Username</span>
+              <input type="text" id="resetUsername" placeholder="Enter username" required />
+            </label>
+            <label>
+              <span>Old Password</span>
+              <input type="password" id="resetOldPassword" placeholder="Current password" required />
+            </label>
+            <label>
+              <span>New Password</span>
+              <input type="password" id="resetNewPassword" placeholder="New password" required />
+            </label>
+            <label>
+              <span>Confirm New Password</span>
+              <input type="password" id="resetConfirmPassword" placeholder="Confirm new password" required />
+            </label>
+            <button type="submit" class="login-btn">Update Password</button>
+          </form>
+          <p class="form-toggle"><a href="#" id="showLoginFromResetBtn">Back to login</a></p>
         </div>
 
         <div id="registerForm" class="login-form-section hidden">
@@ -210,6 +235,7 @@
         </form>
 
         <div class="filter-bar">
+          <label class="filter-label" for="monthFilter">Filter by month</label>
           <select id="monthFilter" class="filter-input" aria-label="Select month">
             <option value="all">All records</option>
           </select>
