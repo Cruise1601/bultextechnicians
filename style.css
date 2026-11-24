@@ -269,6 +269,35 @@ body {
   box-shadow: 0 16px 30px var(--shadow);
 }
 
+.section-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.section-nav-button {
+  background: #fff;
+  color: var(--primary-dark);
+  border: 1px solid var(--line);
+}
+
+.section-nav-button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.low-stock-message {
+  margin: 0;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.low-stock-row {
+  background: #fff8f1;
+}
+
 .eyebrow {
   margin: 0 0 8px;
   letter-spacing: 0.12em;
@@ -343,6 +372,30 @@ textarea {
   align-items: center;
   gap: 12px;
   justify-content: flex-start;
+}
+
+.field-with-action {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+
+.field-with-action > :first-child {
+  min-width: 0;
+  flex: 1;
+}
+
+.field-with-action button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.scan-message {
+  min-height: 1.2em;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 button {
@@ -725,6 +778,10 @@ th {
   animation: fadeIn 0.3s ease;
 }
 
+#scannerModal {
+  z-index: 1100;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -801,6 +858,34 @@ th {
   gap: 12px;
   padding: 16px 24px;
   border-top: 1px solid var(--line);
+}
+
+.scanner-dialog {
+  max-width: 540px;
+}
+
+.scanner-body {
+  padding: 20px 24px;
+}
+
+#scannerReader {
+  width: 100%;
+  min-height: 220px;
+  background: #101820;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#scannerReader video {
+  width: 100%;
+  max-height: 55vh;
+  object-fit: cover;
+}
+
+#scannerStatus {
+  margin: 12px 0 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
 }
 
 #saveEditBtn {

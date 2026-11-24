@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bultex Electronics Isiolo - Technical Team</title>
+    <title>Baltex Electronics</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -11,20 +11,20 @@
     <div id="loginPage" class="login-container show">
       <div class="login-box">
         <div class="login-header">
-          <h1>Bultex Electronics Isiolo</h1>
-          <p class="login-subtitle">Technical Department Logbook</p>
+          <h1>Baltex Electronics</h1>
+          <p class="login-subtitle">Shop &amp; Technician Management</p>
         </div>
         
         <div id="loginForm" class="login-form-section">
           <h2>Login</h2>
           <form id="loginFormElement">
             <label>
-              <span>Username</span>
-              <input type="text" id="loginUsername" placeholder="Enter username" required />
+              <span>Email</span>
+              <input type="email" id="loginEmail" placeholder="Enter your email" autocomplete="email" required />
             </label>
             <label>
               <span>Password</span>
-              <input type="password" id="loginPassword" placeholder="Enter password" required />
+              <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" required />
             </label>
             <button type="submit" class="login-btn">Sign In</button>
           </form>
@@ -35,23 +35,23 @@
         <div id="resetPasswordForm" class="login-form-section hidden">
           <h2>Reset Password</h2>
           <form id="resetFormElement">
-            <label>
-              <span>Username</span>
-              <input type="text" id="resetUsername" placeholder="Enter username" required />
-            </label>
-            <label>
-              <span>Old Password</span>
-              <input type="password" id="resetOldPassword" placeholder="Current password" required />
-            </label>
-            <label>
-              <span>New Password</span>
-              <input type="password" id="resetNewPassword" placeholder="New password" required />
-            </label>
-            <label>
-              <span>Confirm New Password</span>
-              <input type="password" id="resetConfirmPassword" placeholder="Confirm new password" required />
-            </label>
-            <button type="submit" class="login-btn">Update Password</button>
+            <div id="resetRequestFields">
+              <label>
+                <span>Email</span>
+                <input type="email" id="resetEmail" placeholder="Enter your account email" autocomplete="email" required />
+              </label>
+            </div>
+            <div id="resetUpdateFields" class="hidden">
+              <label>
+                <span>New Password</span>
+                <input type="password" id="resetNewPassword" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" />
+              </label>
+              <label>
+                <span>Confirm New Password</span>
+                <input type="password" id="resetConfirmPassword" placeholder="Confirm new password" autocomplete="new-password" minlength="8" />
+              </label>
+            </div>
+            <button type="submit" id="resetSubmitBtn" class="login-btn">Send Reset Email</button>
           </form>
           <p class="form-toggle"><a href="#" id="showLoginFromResetBtn">Back to login</a></p>
         </div>
@@ -65,24 +65,19 @@
             </label>
             <label>
               <span>Username</span>
-              <input type="text" id="registerUsername" placeholder="Choose a username" required />
+              <input type="text" id="registerUsername" placeholder="Choose a display name" required autocomplete="nickname" />
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" id="registerEmail" placeholder="Enter your email" required autocomplete="email" />
             </label>
             <label>
               <span>Password</span>
-              <input type="password" id="registerPassword" placeholder="Create a strong password" required />
+              <input type="password" id="registerPassword" placeholder="At least 8 characters" required minlength="8" autocomplete="new-password" />
             </label>
             <label>
               <span>Confirm Password</span>
-              <input type="password" id="registerConfirm" placeholder="Confirm password" required />
-            </label>
-            <label>
-              <span>Department</span>
-              <select id="registerDept" required>
-                <option value="">Select department</option>
-                <option value="Technical">Technical</option>
-                <option value="Management">Management</option>
-                <option value="Admin">Admin</option>
-              </select>
+              <input type="password" id="registerConfirm" placeholder="Confirm password" required minlength="8" autocomplete="new-password" />
             </label>
             <button type="submit" class="login-btn">Create Account</button>
           </form>
@@ -90,9 +85,8 @@
         </div>
 
         <div class="login-info">
-          <p><strong>Demo Credentials:</strong></p>
-          <p>Username: <code>admin</code></p>
-          <p>Password: <code>admin123</code></p>
+          <p>Baltex Electronics staff sign in to the technician and shop management tools.</p>
+          <p>New accounts start as Technicians. A Shop Admin must grant shop access. Passwords must be at least 8 characters.</p>
         </div>
       </div>
     </div>
@@ -102,8 +96,8 @@
       <header class="page-header">
         <div class="header-content">
           <div>
-            <p class="eyebrow">Technical Department Logbook</p>
-            <h1>Bultex Electronics Isiolo</h1>
+            <p class="eyebrow">Electronics Shop &amp; Repair Services</p>
+            <h1>Baltex Electronics</h1>
           </div>
           <div class="user-info">
             <span id="userGreeting">Welcome</span>
@@ -112,9 +106,15 @@
         </div>
       </header>
 
+      <nav id="sectionNav" class="section-nav hidden" aria-label="Baltex sections">
+        <button type="button" class="section-nav-button active" data-section="technician">Baltex Technician</button>
+        <button type="button" class="section-nav-button" data-section="shop">Shop &amp; Stock</button>
+      </nav>
+
+      <div id="technicianSection">
       <!-- Dashboard Summary -->
       <section class="card dashboard">
-        <h2>📊 Technical Team Summary</h2>
+        <h2>📊 Baltex Technician Summary</h2>
         <div class="stats-grid">
           <div class="stat-box">
             <div class="stat-label">Work Records</div>
@@ -320,7 +320,168 @@
           </div>
         </div>
       </section>
+      </div>
+
+      <section id="shopSection" class="hidden">
+        <div class="card dashboard">
+          <h2>📦 Shop Stock Overview</h2>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Products</div>
+              <div class="stat-value" id="inventoryProductCount">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Units in Stock</div>
+              <div class="stat-value" id="inventoryUnitCount">0</div>
+            </div>
+            <div class="stat-box stat-negative">
+              <div class="stat-label">Low Stock</div>
+              <div class="stat-value" id="lowStockCount">0</div>
+            </div>
+          </div>
+          <p id="lowStockMessage" class="low-stock-message"></p>
+        </div>
+
+        <section class="card">
+          <h2>Product Catalogue</h2>
+          <form id="productForm" class="form-grid">
+            <label>
+              <span>Product name</span>
+              <input id="productName" type="text" required maxlength="120" placeholder="e.g. iPhone 15 128GB" />
+            </label>
+            <label>
+              <span>SKU / Item code</span>
+              <input id="productSku" type="text" required maxlength="60" placeholder="e.g. IP15-128-BLK" />
+            </label>
+            <label class="full-width">
+              <span>Barcode / QR code</span>
+              <div class="field-with-action">
+                <input id="productBarcode" type="text" maxlength="500" placeholder="Scan or enter a product code" />
+                <button type="button" id="scanProductBtn" class="secondary">📷 Scan code</button>
+              </div>
+            </label>
+            <p id="productScanMessage" class="scan-message full-width" role="status" aria-live="polite"></p>
+            <label>
+              <span>Brand</span>
+              <input id="productBrand" type="text" maxlength="80" placeholder="e.g. Apple" />
+            </label>
+            <label>
+              <span>Model</span>
+              <input id="productModel" type="text" maxlength="80" placeholder="e.g. A3090" />
+            </label>
+            <label class="full-width">
+              <span>Description</span>
+              <textarea id="productDescription" rows="3" maxlength="1000" placeholder="Product details"></textarea>
+            </label>
+            <label>
+              <span>Category</span>
+              <select id="productCategory" required>
+                <option value="">Choose category</option>
+                <option>Phones</option>
+                <option>Laptops</option>
+                <option>Accessories</option>
+                <option>Parts</option>
+                <option>Other electronics</option>
+              </select>
+            </label>
+            <label>
+              <span>Cost price (KES)</span>
+              <input id="productCost" type="number" min="0" step="0.01" required />
+            </label>
+            <label>
+              <span>Selling price (KES)</span>
+              <input id="productPrice" type="number" min="0" step="0.01" required />
+            </label>
+            <label>
+              <span>Low-stock alert at</span>
+              <input id="productThreshold" type="number" min="0" step="1" value="2" required />
+            </label>
+            <div class="form-actions full-width">
+              <button type="submit" id="saveProductBtn">Add Product</button>
+              <button type="button" id="cancelProductEditBtn" class="secondary hidden">Cancel Edit</button>
+            </div>
+          </form>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product / SKU</th>
+                  <th>Category</th>
+                  <th>In Stock</th>
+                  <th>Cost</th>
+                  <th>Selling Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryProductsBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Receive Stock, Record Sales &amp; Adjustments</h2>
+          <form id="stockMovementForm" class="form-grid">
+            <label>
+              <span>Product</span>
+              <div class="field-with-action">
+                <select id="movementProduct" required>
+                  <option value="">Choose a product</option>
+                </select>
+                <button type="button" id="scanMovementBtn" class="secondary">📷 Scan</button>
+              </div>
+            </label>
+            <label>
+              <span>Stock operation</span>
+              <select id="movementType" required>
+                <option value="received">Receive stock</option>
+                <option value="sale">Record sale</option>
+                <option value="adjust_increase">Stock count correction (+)</option>
+                <option value="adjust_decrease">Stock count correction (-)</option>
+              </select>
+            </label>
+            <p id="movementScanMessage" class="scan-message full-width" role="status" aria-live="polite"></p>
+            <label>
+              <span>Quantity</span>
+              <input id="movementQuantity" type="number" min="1" step="1" required />
+            </label>
+            <label class="full-width">
+              <span>Note / supplier / sale reference (optional)</span>
+              <input id="movementNote" type="text" maxlength="240" />
+            </label>
+            <div class="form-actions full-width">
+              <button type="submit">Save Stock Operation</button>
+            </div>
+          </form>
+
+          <h3>Recent Stock Activity</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Date</th><th>Product</th><th>Operation</th><th>Change</th><th>Note</th></tr>
+              </thead>
+              <tbody id="stockMovementsBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
     </main>
+
+    <div id="scannerModal" class="modal" aria-hidden="true">
+      <div class="modal-content scanner-dialog" role="dialog" aria-modal="true" aria-labelledby="scannerTitle">
+        <div class="modal-header">
+          <h3 id="scannerTitle">Scan barcode or QR code</h3>
+          <button type="button" class="close-btn" id="closeScannerBtn" aria-label="Close scanner">&times;</button>
+        </div>
+        <div class="scanner-body">
+          <div id="scannerReader"></div>
+          <p id="scannerStatus" role="status" aria-live="polite">Starting camera...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="secondary" id="cancelScannerBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Edit Modal -->
     <div id="editModal" class="modal">
@@ -337,6 +498,9 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="supabase-config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
